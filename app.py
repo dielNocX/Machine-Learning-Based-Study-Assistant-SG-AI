@@ -220,7 +220,7 @@ def menu():
     elif choice == "Chatbot":
         chatbot()
 
-st.title("Student Performance Regression Model")
+st.title("ML-Based Study Assistant")
 st.divider()
 path = './StudentPerformanceFactors.csv'
 df = pd.read_csv(path)
