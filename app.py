@@ -7,7 +7,7 @@ from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sentimentAnalysis import chatbot
-import seaborn as sns
+
 
 def data():
     st.write('Rows, Column: ',df.shape)
@@ -73,67 +73,129 @@ def home():
     
     st.divider()
 
-def convert_to_numeric(var):
-    if var == "Low":
-        return 1
-    elif var == "Medium":
-        return 2
+def convert_to_numeric(var, language):
+    if language == "EN":
+        if var == "Low":
+            return 1
+        elif var == "Medium":
+            return 2
+        else:
+            return 3
     else:
-        return 3
+        if var == "Rendah":
+            return 1
+        elif var == "Sedang":
+            return 2
+        else:
+            return 3
+    
 
 def tool():
-    #English
-    st.header("Exam Score Predictor Tool")
-
-
-    hours_studied = st.number_input("Hours Studied", min_value=0 ,value="min", placeholder="Type a number...")
-    attendance = st.number_input("Attendance", min_value=0 ,value="min", placeholder="Type a number...")
-    parental_involvement = st.selectbox("Parental Involvement",("Low", "Medium", "High"))
-    access_to_resources = st.selectbox("Access to Resources",("Low", "Medium", "High"))
-    previous_scores = st.number_input("Previous Score", min_value=0, max_value=100 ,value="min", placeholder="Type a number...")
-    st.caption("_If you don't have previous test/exam scores, enter a score of '75' or whatever score you like._")
-    motivation_level = st.selectbox("Motivation Level",("Low", "Medium", "High"))
-    tutoring_sessions = st.number_input("Tutoring Sessions", min_value=0 ,value="min", placeholder="Type a number...")
-    family_income = st.selectbox("Family Income",("Low", "Medium", "High"))
-    peer_influence = st.selectbox("Peer Influence",("Negative", "Neutral", "Positive"))
-    parental_education_level = st.selectbox("Parental Education Level",("High School", "College", "Postgraduate"))
-
-    st.divider()
-    st.write("Hours Studied: ", hours_studied)
-    st.write("Attendance: ", attendance)
-    st.write("Parental Involvement: ", parental_involvement)
-    st.write("Access to Resources: ", access_to_resources)
-    st.write("Previous Scores: ", previous_scores)
-    st.write("Motivation Level: ", motivation_level)
-    st.write("Tutoring Sessions: ", tutoring_sessions)
-    st.write("Family Income: ", family_income)
-    st.write("Peer Influence: ", peer_influence)
-    st.write("Parental Education Level: ", parental_education_level)
-
-    parental_involvement = convert_to_numeric(parental_involvement)
-    access_to_resources = convert_to_numeric(access_to_resources)
-    motivation_level = convert_to_numeric(motivation_level)
-    family_income = convert_to_numeric(family_income)
+    lang = ["EN", "ID"]
+    langSelection = st.segmented_control("Language", lang, selection_mode="single", default="EN")
     
-    if peer_influence == "Negative":
-        peer_influence = 1
-    elif peer_influence == "Neutral":
-        peer_influence = 2
-    else:
-        peer_influence = 3
+    if langSelection == "EN":
+        #English
+        st.header("Exam Score Predictor Tool")
 
-    if parental_education_level == "High School":
-        parental_education_level = 1
-    elif parental_education_level == "College":
-        parental_education_level = 2
-    else:
-        parental_education_level = 3
+        hours_studied = st.number_input("Hours Studied", min_value=0 ,value="min", placeholder="Type a number...")
+        attendance = st.number_input("Attendance", min_value=0 ,value="min", placeholder="Type a number...")
+        parental_involvement = st.selectbox("Parental Involvement",("Low", "Medium", "High"))
+        access_to_resources = st.selectbox("Access to Resources",("Low", "Medium", "High"))
+        previous_scores = st.number_input("Previous Score", min_value=0, max_value=100 ,value="min", placeholder="Type a number...")
+        st.caption("If you don't have previous test/exam scores, enter a score of '75' or whatever score you like.")
+        motivation_level = st.selectbox("Motivation Level",("Low", "Medium", "High"))
+        tutoring_sessions = st.number_input("Tutoring Sessions", min_value=0 ,value="min", placeholder="Type a number...")
+        family_income = st.selectbox("Family Income",("Low", "Medium", "High"))
+        peer_influence = st.selectbox("Peer Influence",("Negative", "Neutral", "Positive"))
+        parental_education_level = st.selectbox("Parental Education Level",("High School", "College", "Postgraduate"))
 
-    predict = st.button("Predict")
-    if predict:
-        predict_result = prediksi_nilai_ujian(hours_studied, attendance, parental_involvement, access_to_resources, previous_scores, motivation_level, tutoring_sessions, family_income, peer_influence, parental_education_level, regresi)
-        st.write("Exam Score prediction result:", max(min(predict_result,100),0))
-    
+        st.divider()
+        st.write("Hours Studied: ", hours_studied)
+        st.write("Attendance: ", attendance)
+        st.write("Parental Involvement: ", parental_involvement)
+        st.write("Access to Resources: ", access_to_resources)
+        st.write("Previous Scores: ", previous_scores)
+        st.write("Motivation Level: ", motivation_level)
+        st.write("Tutoring Sessions: ", tutoring_sessions)
+        st.write("Family Income: ", family_income)
+        st.write("Peer Influence: ", peer_influence)
+        st.write("Parental Education Level: ", parental_education_level)
+
+        parental_involvement = convert_to_numeric(parental_involvement, langSelection)
+        access_to_resources = convert_to_numeric(access_to_resources, langSelection)
+        motivation_level = convert_to_numeric(motivation_level, langSelection)
+        family_income = convert_to_numeric(family_income, langSelection)
+        
+        if peer_influence == "Negative":
+            peer_influence = 1
+        elif peer_influence == "Neutral":
+            peer_influence = 2
+        else:
+            peer_influence = 3
+
+        if parental_education_level == "High School":
+            parental_education_level = 1
+        elif parental_education_level == "College":
+            parental_education_level = 2
+        else:
+            parental_education_level = 3
+
+        predict = st.button("Predict")
+        if predict:
+            predict_result = prediksi_nilai_ujian(hours_studied, attendance, parental_involvement, access_to_resources, previous_scores, motivation_level, tutoring_sessions, family_income, peer_influence, parental_education_level, regresi)
+            st.write("Exam Score prediction result:", max(min(predict_result,100),0))
+    else:
+        #Indonesia
+        st.header("Alat Prediksi Skor Ujian")
+
+        hours_studied = st.number_input("Jam Belajar", min_value=0 ,value="min", placeholder="Ketikkan sebuah angka...")
+        attendance = st.number_input("Kehadiran", min_value=0 ,value="min", placeholder="Ketikkan sebuah angka...")
+        parental_involvement = st.selectbox("Partisipasi Orang Tua",("Rendah", "Sedang", "Tinggi"))
+        access_to_resources = st.selectbox("Akses ke Sumber Daya",("Rendah", "Sedang", "Tinggi"))
+        previous_scores = st.number_input("Skor Sebelumnya", min_value=0, max_value=100 ,value="min", placeholder="Ketikkan sebuah angka...")
+        st.caption("Jika Anda tidak memiliki skor ujiannya sebelumnya, masukkan skor '75' atau skor berapa pun yang Anda sukai.")
+        motivation_level = st.selectbox("Tingkat Motivasi",("Rendah", "Sedang", "Tinggi"))
+        tutoring_sessions = st.number_input("Sesi Mengajar Tambahan", min_value=0 ,value="min", placeholder="Ketikkan sebuah angka...")
+        family_income = st.selectbox("Penghasilan Keluarga",("Rendah", "Sedang", "Tinggi"))
+        peer_influence = st.selectbox("Pengaruh Teman Sebaya",("Negatif", "Netral", "Positif"))
+        parental_education_level = st.selectbox("Tingkat Pendidikan Orang Tua",("SMA/Sederajat", "Sarjana", "Pasca Sarjana"))
+
+        st.divider()
+        st.write("Jam Belajar: ", hours_studied)
+        st.write("Kehadiran: ", attendance)
+        st.write("Partisipasi Orang Tua: ", parental_involvement)
+        st.write("Akses ke Sumber Daya: ", access_to_resources)
+        st.write("Skor Sebelumnya: ", previous_scores)
+        st.write("Tingkat Motivasi: ", motivation_level)
+        st.write("Sesi Mengajar Tambahan: ", tutoring_sessions)
+        st.write("Penghasilan Keluarga: ", family_income)
+        st.write("Pengaruh Teman Sebaya: ", peer_influence)
+        st.write("Tingkat Pendidikan Orang Tua: ", parental_education_level)
+
+        parental_involvement = convert_to_numeric(parental_involvement, langSelection)
+        access_to_resources = convert_to_numeric(access_to_resources, langSelection)
+        motivation_level = convert_to_numeric(motivation_level, langSelection)
+        family_income = convert_to_numeric(family_income, langSelection)
+                
+        if peer_influence == "Negatif":
+            peer_influence = 1
+        elif peer_influence == "Netral":
+            peer_influence = 2
+        else:
+            peer_influence = 3
+
+        if parental_education_level == "SMA/Sederajat":
+            parental_education_level = 1
+        elif parental_education_level == "Sarjana":
+            parental_education_level = 2
+        else:
+            parental_education_level = 3
+
+        predict = st.button("Prediksi")
+        if predict:
+            predict_result = prediksi_nilai_ujian(hours_studied, attendance, parental_involvement, access_to_resources, previous_scores, motivation_level, tutoring_sessions, family_income, peer_influence, parental_education_level, regresi)
+            st.write("Hasil Prediksi Skor Ujian:", max(min(predict_result,100),0))    
 
 #   Hours_Studied
 #   Attendance
@@ -200,7 +262,7 @@ parental_education_mapping = {'High School': 1, 'College': 2, 'Postgraduate': 3}
 if 'Parental_Education_Level' in df.columns:
     df['Parental_Education_Level'] = df['Parental_Education_Level'].map(parental_education_mapping)
 
-gender_mapping = {'Male': 0, 'Female': 1}
+gender_mapping = {'Male': 0, 'Female': 1}   
 if 'Gender' in df.columns:
     df['Gender'] = df['Gender'].map(gender_mapping)
 
