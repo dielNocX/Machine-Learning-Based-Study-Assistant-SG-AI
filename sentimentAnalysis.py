@@ -12,6 +12,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import numpy as np
+import re
 
 # Download dari NLTK
 nltk.download('stopwords')
@@ -114,7 +115,10 @@ def random_intro():
 def chatbot():
     prompt = st.chat_input("Tanya seputar tips belajar (cth: saya butuh metode belajar yang bagus)")
 
-    if prompt and (prompt == "Tanya seputar tips belajar (cth: saya butuh metode belajar yang bagus)" or any(x in prompt.lower() for x in ["halo", "hai","hi"])):
+    if prompt and (
+        prompt == "Tanya seputar tips belajar (cth: saya butuh metode belajar yang bagus)" 
+        or re.search(r'\b(halo|hai|hi)\b', prompt.lower())
+    ):        
         user, bot= ("user", prompt), ("bot", random_intro())
         display_chat(*user)
         display_chat(*bot)
