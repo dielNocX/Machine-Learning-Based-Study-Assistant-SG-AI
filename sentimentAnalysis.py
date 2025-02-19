@@ -16,6 +16,7 @@ import numpy as np
 # Download dari NLTK
 nltk.download('stopwords')
 nltk.download('punkt')
+nltk.download('punkt_tab')
 
 stop_words = set(stopwords.words('english'))
 
